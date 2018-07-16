@@ -16,6 +16,7 @@ from utils.OpenEphys import *
 from tqdm import tqdm
 import pickle
 from scipy import signal
+import scipy.fftpack as fft
 
 def extract_stim_timestamps(stim):
     stim_timestamps = [] #numpy array that contains the stimulus timestamps
@@ -48,7 +49,7 @@ def read_evoked_lfp_from_stim_timestamps_downsampled(down_sampled_data,  down_sa
 	#Saving the evoked LFP waveforms in an array
     evoked = np.zeros((len(down_sampled_stim_timestamps), len(down_sampled_data), int(down_sampled_rate*(p['evoked_pre']+p['evoked_post']))))
     for i in tqdm(range(len(down_sampled_stim_timestamps))):
-        evoked[i,:,:] = down_sampled_data[:,int(down_sampled_stim_timestamps[i]-p['evoked_pre']*down_sampled_rate):int(down_sampled_stim_timestamps[i]+p['evoked_post']*down_sampled_rate)]
+        evoked[i,:,:] = down_sampled_data[:, int(down_sampled_stim_timestamps[i]-p['evoked_pre']*down_sampled_rate) : int(down_sampled_stim_timestamps[i]+p['evoked_post']*down_sampled_rate)]
     return evoked
 
 
@@ -84,20 +85,24 @@ def read_evoked_lfp(probe,group,p,data):
     nr_of_electrodes = p['nr_of_electrodes_per_group']
     save_file = p['path'] + '/probe_{:g}_group_{:g}/probe_{:g}_group_{:g}_evoked.pickle'.format(probe,group,probe,group)
 
+
     #Filtering
-    print('*****')
-    print(p['low_pass_filter'])
-    if (p['low_pass_filter'] == True):
-        #Low pass filtering
-        filt = lowpassFilter(rate = p['sample_rate'], high = p['high_cut_freq'], order = 3, axis = 1)
-        filtered = filt(data)
-    else:
+    if(p['band_pass_filter']):
         #Band pass filtering
         print('****')
         print(p['high_cut_freq'])
         print(p['low_cut_freq'])
-        filt = bandpassFilter(rate = p['sample_rate'], high = p['high_cut_freq'], low = p['low_cut_freq'], order = 4, axis = 1)
+        filt_lowpass = lowpassFilter(rate = p['sample_rate'], high = p['high_cut_freq'], order = 4, axis = 1)
+        filt_highpass = highpassFilter(rate = p['sample_rate'], low = p['low_cut_freq'], order = 4, axis = 1)
+        filtered = filt_highpass(filt_lowpass(data))
+        print(filtered.shape)
+        print(filtered)
+        print(data.shape)
+    else:
+        #Low pass filtering
+        filt = lowpassFilter(rate = p['sample_rate'], high = p['high_cut_freq'], order = 3, axis = 1)
         filtered = filt(data)
+
 
     #Notch filtering
     #if p['notch_filt_freq'] != 0:
@@ -145,17 +150,22 @@ def read_evoked_lfp(probe,group,p,data):
             if trigger_all[i-1] == 0 and trigger_all[i] == 1:
                 stim_timestamps = np.append(stim_timestamps, i)
 
-    #Downsampling 
- #   down_sampled=signal.decimate(filtered,30, zero_phase=True) #Downsampling signal
-  #  small_sample_rate=p['sample_rate']/30
-  #  stim_downsampled=(stim_timestamps/30).astype(int) #Shifting stim_timestamps
-
- #   evoked_downsampled = read_evoked_lfp_from_stim_timestamps_downsampled(down_sampled, stim_downsampled, p, small_sample_rate)
-
     evoked = read_evoked_lfp_from_stim_timestamps(filtered, stim_timestamps, p)
 
     #Save all evoked activity in a pickle file
- #   pickle.dump({'evoked':evoked_downsampled, 'stim_timestamps':stim_downsampled}, open(save_file, 'wb'), protocol=-1)
-  
-    #Save all evoked activity in a pickle file
     pickle.dump({'evoked':evoked, 'stim_timestamps':stim_timestamps}, open(save_file, 'wb'), protocol=-1)
+
+    #Downsampling
+    if(p['down_sample'] == True):
+        down_sampled = signal.decimate(filtered, p['down_sample_rate'], zero_phase=True) #Downsampling signal
+        small_sample_rate = p['sample_rate']/p['down_sample_rate']
+        stim_downsampled = (stim_timestamps/p['down_sample_rate']).astype(int) #Shifting stim_timestamps
+
+        evoked_downsampled = read_evoked_lfp_from_stim_timestamps_downsampled(down_sampled, stim_downsampled, p, small_sample_rate)
+
+        #Save all evoked activity in a pickle file
+        save_file = p['path'] + '/probe_{0}_group_{1}/probe_{2}_group_{3}_evoked_down_sampled_{4}.pickle'.format(probe,group,probe,group,p['down_sample_rate'])
+        pickle.dump({'evoked':evoked_downsampled, 'stim_timestamps':stim_downsampled}, open(save_file, 'wb'), protocol=-1)
+      
+
+
