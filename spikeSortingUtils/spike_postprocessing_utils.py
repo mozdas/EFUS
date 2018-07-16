@@ -39,9 +39,9 @@ def retain_cluster_info(probe,group,p):
 
     raw_data = np.fromfile(p['mainpath'] + '/analysis_files/probe_{:g}_group_{:g}/probe_{:g}_group_{:g}.dat'.format(probe,group,probe,group),dtype='int16') #reading out the raw data file
     num_samples = int(len(raw_data) / p['nr_of_electrodes_per_group'])
-    raw_data = np.reshape(raw_data, (num_samples, p['nr_of_electrodes_per_group']))
-    fil = bandpassFilter(rate=p['sample_rate'], low=p['low_cutoff'], high=p['high_cutoff'], order=3, axis = 0)
-    raw_data_f = fil(raw_data)
+    #raw_data = np.reshape(raw_data, (num_samples, p['nr_of_electrodes_per_group']))
+    #fil = bandpassFilter(rate=p['sample_rate'], low=p['low_cutoff'], high=p['high_cutoff'], order=3, axis = 0)
+    #raw_data_f = fil(raw_data)
     units = {}
     
     unit_indices = np.unique(np_clu)
@@ -50,16 +50,16 @@ def retain_cluster_info(probe,group,p):
         spike_times_cluster_index = np.where(np_clu == cluster)
         spike_times_cluster = np_all_spiketimes[spike_times_cluster_index]
         num_spikes_in_cluster = len(spike_times_cluster)
-        num_samples_per_waveform = p['samples_before'] + p['samples_after']
-        waveforms = np.zeros((num_spikes_in_cluster,p['nr_of_electrodes_per_group'],num_samples_per_waveform))
-        for spike in range(num_spikes_in_cluster):
-            for trode in range(p['nr_of_electrodes_per_group']):
-                for sample in range(num_samples_per_waveform):
-                    waveforms[spike,trode,sample] = raw_data_f[(int(spike_times_cluster[spike])-p['samples_before']+sample), trode]
+       # num_samples_per_waveform = p['samples_before'] + p['samples_after']
+        #waveforms = np.zeros((num_spikes_in_cluster,p['nr_of_electrodes_per_group'],num_samples_per_waveform))
+        #for spike in range(num_spikes_in_cluster):
+            #for trode in range(p['nr_of_electrodes_per_group']):
+                #for sample in range(num_samples_per_waveform):
+                    #waveforms[spike,trode,sample] = raw_data_f[(int(spike_times_cluster[spike])-p['samples_before']+sample), trode]
 
         unit = [0,0]
         unit[0] = spike_times_cluster
-        unit[1] = waveforms
+        #unit[1] = waveforms
         units['unit{:g}'.format(cluster)] = unit
 
     path_pickle_file = p['mainpath'] + '/analysis_files/probe_{:g}_group_{:g}/probe_{:g}_group_{:g}_spikeinfo.pickle'.format(probe,group,probe,group)

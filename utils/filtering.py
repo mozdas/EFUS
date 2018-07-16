@@ -8,6 +8,13 @@ def lowpass_filter(rate=None, high=None, order=None):
                          (high / (rate / 2.)),
                          'lowpass')
 
+def highpass_filter(rate=None, low=None, order=None):
+    """Butterworth lowpass filter."""
+    assert order >= 1
+    return signal.butter(order,
+                         (low / (rate / 2.)),
+                         'highpass')
+
 def bandpass_filter(rate=None, high=None, low=None, order=None):
     """Butterworth bandpass filter."""
     assert order >= 1
@@ -58,4 +65,9 @@ class notchFilter(Filter):
 class lowpassFilter(Filter):
     def __init__(self, rate=None, high=None, order=None, axis = None):
         self._filter = lowpass_filter(rate=rate, high=high, order=order)
+        self._axis = axis
+
+class highpassFilter(Filter):
+    def __init__(self, rate=None, low=None, order=None, axis = None):
+        self._filter = highpass_filter(rate=rate, low=low, order=order)
         self._axis = axis

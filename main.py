@@ -15,6 +15,7 @@ from spikeSortingUtils.klusta_preprocessing_utils import *
 from LFPutils.read_evoked_lfp import read_evoked_lfp
 from tqdm import tqdm
 import pickle
+from datetime import datetime
 
 def main(p):
     """
@@ -27,6 +28,8 @@ def main(p):
 
     print('start reading out and analyzing trodes')
 
+    print('Start time: ' + str(datetime.now()))
+
     #Getting the directory of the main path of the experiment for reference in future steps
     mycwd = os.getcwd()
 
@@ -35,8 +38,6 @@ def main(p):
         nr_of_groups = p['nr_of_tetrodes']
     elif p['probe_type'] == 'linear':
         nr_of_groups = p['shanks']
-    elif p['probe_type'] == 'custom':
-        nr_of_groups = 1
 
 ########Read out and Analysis################
     for probe in range(p['probes']):
@@ -51,3 +52,4 @@ def main(p):
                     os.chdir(mycwd)
             if p['LFP_analysis']:
                 read_evoked_lfp(probe,group,p,group_file)
+    print('Finish time: ' + str(datetime.now()))

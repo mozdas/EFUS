@@ -14,8 +14,8 @@ run this script from bash as following:
 import pickle
 import os
 import sys
-from spike_postprocessing_utils import *
-
+from spikeSortingUtils.spike_postprocessing_utils import *
+#mainPath="/media/yaniklab/05d01d78-2bd6-4a4e-b573-df49ccacb71c/Ljubica_Cimesa_2018_27_03/test/" 
 mainPath = sys.stdin.read().splitlines()[0] #Reads the mainPath from bash input.
 """dirs = os.listdir(mainPath)
 
@@ -29,8 +29,11 @@ for folder in (folder for folder in dirs if ((folder != 'log.txt') and (folder !
         for group in range(p['nr_of_groups']):
             retain_cluster_info(probe,group,p)"""
 
-folder = 'analysis_files'
+
+folder =[x for x in os.listdir(mainPath) if x not in ('analyzed', 'analysis_files', 'other')][0]
 p =  pickle.load(open(mainPath + folder + '/paramsDict.p', 'rb'))
+
 for probe in range(p['probes']):
     for group in range(p['nr_of_groups']):
         retain_cluster_info(probe,group,p)
+

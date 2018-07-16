@@ -8,7 +8,10 @@ Contains the source code for the custom GUI which is aimed to be complementary t
 
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCorec
+#from pyqtgraph.Qt import QtCore
 import QtGui
+#from PyQt4 import QtGui
+#from PyQt5 import QtGui
 import pyqtgraph.console
 import numpy as np
 from custom_feature_plots import *

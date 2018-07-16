@@ -19,6 +19,8 @@ import math
 from matplotlib.pyplot import *
 from pandas import *
 
+
+
 #Read the path to the folder containing all the recording sessions
 mainPath = sys.stdin.read().splitlines()[0]
 print(mainPath)
@@ -72,6 +74,7 @@ for folder in (folder for folder in dirs if ((folder != 'log.txt') and (folder !
 			evoked_err = evoked_std / math.sqrt(len(evoked)) #Standard error of the evoked LFP waveforms across trials
 			peak_info[probe]['peak_amps'][group*p['nr_of_electrodes_per_group']:(group+1)*p['nr_of_electrodes_per_group']] = np.min(evoked_avg, 1)
 			time = np.linspace(-p['evoked_pre']*1000, p['evoked_post']*1000, (p['evoked_post'] + p['evoked_pre']) * p['sample_rate'])
+#			time = np.linspace(-p['evoked_pre']*1000, p['evoked_post']*1000, (p['evoked_post'] + p['evoked_pre']) * (p['sample_rate']/30))
 
 			if p['probe_type'] == 'linear':
 			#Make a plot for the electrodes on the shank
@@ -96,16 +99,22 @@ for folder in (folder for folder in dirs if ((folder != 'log.txt') and (folder !
 
 				except ValueError:
 					pass
-
 				figure()
 				plot(time, evoked_avg[trode], 'k-')
 				fill_between(time, evoked_avg[trode]-evoked_err[trode], evoked_avg[trode]+evoked_err[trode])
 				xlabel('Time (ms)')
 				ylabel('Voltage (uV)')
-
-				ylim_min = np.floor(np.min(evoked) / 100) * 100
-				ylim_max = np.ceil(np.max(evoked) / 100) * 100
+				ylim_min = np.floor(np.min(evoked) / 100) * 70
+				ylim_max = np.ceil(np.max(evoked) / 100) * 70
 				ylim(ylim_min, ylim_max)
+				xlim_min = -p['evoked_pre']*1000
+				xlim_max = p['evoked_post']*1000
+				xlim(xlim_min, xlim_max)
+				y_ticks = np.arange((ylim_min-ylim_min%50), (ylim_max-ylim_max%50), 50)
+				x_ticks = np.arange(xlim_min, xlim_max, 5)
+				axes().set_xticks(x_ticks, minor=True)
+				axes().set_yticks(y_ticks, minor=True)
+				axes().grid(which='both')
 				savefig(evoked_svg_path + 'electrode{:g}_evoked.svg'.format(trode), format = 'svg')
 				savefig(evoked_pdf_path + 'electrode{:g}_evoked.pdf'.format(trode), format = 'pdf')
 				close()
@@ -120,3 +129,4 @@ for folder in (folder for folder in dirs if ((folder != 'log.txt') and (folder !
 writer_0.save()
 if p['probes'] == 2:
 	writer_1.save()
+
