@@ -46,7 +46,8 @@ def read_evoked_lfp_from_stim_timestamps(filtered_data, stim_timestamps, p):
 
 
 def read_evoked_lfp_from_stim_timestamps_downsampled(down_sampled_data,  down_sampled_stim_timestamps, p, down_sampled_rate):
-	#Saving the evoked LFP waveforms in an array
+    print('Down sampling to 1000 Hertz')	
+    #Saving the evoked LFP waveforms in an array
     evoked = np.zeros((len(down_sampled_stim_timestamps), len(down_sampled_data), int(down_sampled_rate*(p['evoked_pre']+p['evoked_post']))))
     for i in tqdm(range(len(down_sampled_stim_timestamps))):
         evoked[i,:,:] = down_sampled_data[:, int(down_sampled_stim_timestamps[i]-p['evoked_pre']*down_sampled_rate) : int(down_sampled_stim_timestamps[i]+p['evoked_post']*down_sampled_rate)]
@@ -71,37 +72,16 @@ def read_evoked_lfp(probe,group,p,data):
 		of samples in the evoked LFP window) and the time stamps of the stimulus trigger events in a pickle file saved in the folder
 		for the particular probe and shank of the analysis.
     """
-    if(p['notch_filt_freq'] == 0):
-        if(p['low_pass_filter'] == True):
-            print('#### Low-pass filtering the data ####')
-        else:
-            print('#### Band-pass filtering the data ####')
-    else:
-        if(p['low_pass_filter'] == True):
-            print('#### Low-pass and notch filtering the data ####')
-        else:
-            print('#### Band-pass and notch filtering the data ####')
+
+    print('#### Low-pass filtering the data ####')
+   
 
     nr_of_electrodes = p['nr_of_electrodes_per_group']
     save_file = p['path'] + '/probe_{:g}_group_{:g}/probe_{:g}_group_{:g}_evoked.pickle'.format(probe,group,probe,group)
 
-
-    #Filtering
-    if(p['band_pass_filter']):
-        #Band pass filtering
-        print('****')
-        print(p['high_cut_freq'])
-        print(p['low_cut_freq'])
-        filt_lowpass = lowpassFilter(rate = p['sample_rate'], high = p['high_cut_freq'], order = 4, axis = 1)
-        filt_highpass = highpassFilter(rate = p['sample_rate'], low = p['low_cut_freq'], order = 4, axis = 1)
-        filtered = filt_highpass(filt_lowpass(data))
-        print(filtered.shape)
-        print(filtered)
-        print(data.shape)
-    else:
-        #Low pass filtering
-        filt = lowpassFilter(rate = p['sample_rate'], high = p['high_cut_freq'], order = 3, axis = 1)
-        filtered = filt(data)
+    #Low pass filtering
+    filt = lowpassFilter(rate = p['sample_rate'], high = p['cutoff_freq'], order = 3, axis = 1)
+    filtered = filt(data)
 
 
     #Notch filtering
@@ -153,7 +133,9 @@ def read_evoked_lfp(probe,group,p,data):
     evoked = read_evoked_lfp_from_stim_timestamps(filtered, stim_timestamps, p)
 
     #Save all evoked activity in a pickle file
-    pickle.dump({'evoked':evoked, 'stim_timestamps':stim_timestamps}, open(save_file, 'wb'), protocol=-1)
+    fid = open(save_file, 'wb')
+    pickle.dump({'evoked':evoked, 'stim_timestamps':stim_timestamps}, fid, protocol=-1)
+    fid.close()
 
     #Downsampling
     if(p['down_sample'] == True):
@@ -165,7 +147,9 @@ def read_evoked_lfp(probe,group,p,data):
 
         #Save all evoked activity in a pickle file
         save_file = p['path'] + '/probe_{0}_group_{1}/probe_{2}_group_{3}_evoked_down_sampled_{4}.pickle'.format(probe,group,probe,group,p['down_sample_rate'])
-        pickle.dump({'evoked':evoked_downsampled, 'stim_timestamps':stim_downsampled}, open(save_file, 'wb'), protocol=-1)
+        fid = open(save_file, 'wb')
+        pickle.dump({'evoked':evoked_downsampled, 'stim_timestamps':stim_downsampled}, fid, protocol=-1)
+        fid.close()
       
 
 
