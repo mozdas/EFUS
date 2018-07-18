@@ -146,7 +146,7 @@ def read_evoked_lfp(probe,group,p,data):
         evoked_downsampled = read_evoked_lfp_from_stim_timestamps_downsampled(down_sampled, stim_downsampled, p, small_sample_rate)
 
         #Save all evoked activity in a pickle file
-        save_file = p['path'] + '/probe_{0}_group_{1}/probe_{2}_group_{3}_evoked_down_sampled_{4}.pickle'.format(probe,group,probe,group,p['down_sample_rate'])
+        save_file = p['path'] + '/probe_{0}_group_{1}/probe_{2}_group_{3}_evoked_down_sampled.pickle'.format(probe,group,probe,group)
         fid = open(save_file, 'wb')
         pickle.dump({'evoked':evoked_downsampled, 'stim_timestamps':stim_downsampled}, fid, protocol=-1)
         fid.close()
