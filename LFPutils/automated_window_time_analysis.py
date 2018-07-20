@@ -1,8 +1,32 @@
-"""    
+"""   
+
+    This script analyzes the recording sessions as broken down into time windows and creates peak amplitude graphs for each electrode window by window. For a given list it also generates normalized amplitude graphs and average average peak amplitudes using a error correction algorithm.
+
+    Required Files:
+        Evoked data, parameters dictionary.
+
+    Input:
+        main_path : Main path for the data.
+        tw : Time window length.
+        groupt_to_plot : The group on which the analysis will be performed on.
+        trodes_to_plot : A list of electrodes defined by user. Normalized peak amplitudes and average peak amplitudes will be calculated according to this list.
+        y_scale : Scale factor of the y-scale of the graph.
+        normalization_t1, normalization_t2 : The start and the end points of the base interval. Corrected peak amplitudes will be calclated using this interval's mean.
+
+    Output:
+        Windowed evoked LFP graphs for a given electrode list
+        Peak amplitude graphs for all electodes
+        Normalized amplitude graph
+        Average peak amplitude graph
+        Numpy "npy" file that contains peak amplitudes values and peak amplitude errors containing all electordes
+        Pickle file for window LFP values of all electordes
+        Numpy "npy" file that contains peak amplitudes values and peak amplitude errors of only given electorde list
+        Pickle file for window LFP values of only given electorde list
+
     Reviewed on June  2018
     Author: Mehmet Ozdas and Abdulkadir Gokce - Please contact them in case of any questions.
 
-    This script
+    
 """
 import numpy as np
 import numpy
