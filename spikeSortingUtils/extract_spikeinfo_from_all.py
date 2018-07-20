@@ -14,15 +14,17 @@ run this script from bash as following:
 import pickle
 import os
 import sys
-from spikeSortingUtils.spike_postprocessing_utils import *
+from spike_postprocessing_utils import retain_cluster_info
 
 mainPath = sys.stdin.read().splitlines()[0] #Reads the mainPath from bash input.
 dirs = os.listdir(mainPath)
 
-for folder in (folder for folder in dirs if ((folder != 'log.txt') and (folder != 'notes.docx') and (folder != 'analyzed') and (folder != 'other'))):
+for folder in (folder for folder in dirs if ((folder != 'log.txt') and (folder != 'notes.docx') and (folder != 'analyzed') and (folder != 'other') and (folder != 'analysis_files') and (folder != '.DS_Store') and (folder != '._.DS_Store'))):
     #Iterating over the folders for individual recording sessions, while skipping other files and folders.
     #All files/folders in the experiment folder that are not log, notes or analyzed should be grouped in a folder named 'other'
+
     print(mainPath + folder) #printing the recording session that is being analyzed
+
     p = pickle.load(open(mainPath + folder + '/paramsDict.p', 'rb')) #Loading the params_dict dictionary
 
     for probe in range(p['probes']):

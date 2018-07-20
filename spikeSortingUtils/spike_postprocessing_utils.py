@@ -8,7 +8,7 @@ Contains the functions for retaining the spike information from the output of Kl
 
 import numpy as np
 import h5py
-from utils.filtering import *
+#from utils.filtering import *
 import pickle
 
 def retain_cluster_info(probe,group,p):
