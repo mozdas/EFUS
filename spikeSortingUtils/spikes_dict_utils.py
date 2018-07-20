@@ -1,0 +1,145 @@
+import numpy as np
+import h5py
+import pickle
+import os
+import matplotlib.pyplot as plt
+
+
+'''
+get_spiketimes_per_channel
+
+This function extracts the spike_times per channel and generates a dictionary containing for each of the 16 channels the timespams of the recorded spikes
+Input: 
+    1.mainPath: Path to the folder above the file one wants to analyse    
+    2.group: group number, which is either str(0) or str(1), depending on the shank one wants to analyse
+    3.decision: which spikes one wants to analyse, one has 3 options:
+       -'all_spikes': one analyses all spikes identified by klusta, independently of the cluster it was assigned to in klustaviewa. All spiketimes are extracted and assigned to a channel
+       -'only_good': only the spikes that belong to a "good" cluster in klustaviewa will get analyse. Only these spiketimes are extracted and assigned to a channel
+       -[cluster_id]: one can give a list of cluster IDs one wants to analyse. Only the corresponding spiketimes are extracted
+Output: 
+    1. spikes_dict: A Dictionary containing the times of all spikes that were detected by a channel. 
+
+
+The function first reads in all necessary informations about the spikes:
+    -kwik file
+     contains the spike times of all spikes identified by klusta. np.array of len=nr.spikes
+     All spikes are listed separetly and the time indicates the time indice of the measurement 
+    -kwx file
+     contains the feature mask of all spikes, np.array with size nr.spikesx48 
+     It contains the information which channel detected the spike. Each line stands for one spike, each row indicates the channel. One channel consists of 3 rows. 
+     Example: 0,0,0,1,1,1,... means that the first channel did not detect the spike, but the second channel did
+    -clu file
+     contains the cluster information, np.array with len=nr.spikes
+     All spikes are listed separately and the corresponding ID of the cluster is was assigned to by klusta is given. 
+
+In a second step it generates the dictionary 
+'''
+def get_spiketimes_per_channel(mainPath, group, decision='all'):
+    #1. read spike information
+    #read kwik file: get spike times of all spikes
+    path_kwik_file = mainPath+'analysis_files/probe_0_group_{0}/probe_0_group_{0}.kwik'.format(group)
+    all_spiketimes=np.array(h5py.File(path_kwik_file,'r+')['/channel_groups/0/spikes/time_samples'])
+    #read kwx file to get the feature mask containing the information about which channel detected the spike
+    path_kwx_file=mainPath+'analysis_files/probe_0_group_{0}/probe_0_group_{0}.kwx'.format(group)
+    channel_info=h5py.File(path_kwx_file,'r+')['channel_groups/0/features_masks'][:,:,1]
+
+    #If one wants only the spikes that were identified as "good" in klustaviewa: 
+    #It overwrite the all_spiketimes and the channel_info and excludes all elements that do not belong to a spike that was identified as good, as it belongs to a cluster that in klustaviewa was not assigned to "good"
+    #The same procedure happens if one has a specific list of good cluster ID that one wants to extract
+    if decision=='only_good' or decision == 'exclude_noise' or type(decision).__name__=='list':
+        #read clu file to get cluster information for each spike:
+        path_clu_file = mainPath + 'analysis_files/probe_0_group_{0}/probe_0_group_{0}.clu.0'.format(group) 
+        cluster_info = np.loadtxt(path_clu_file)[1:] #exclude the first entry which is the total number of clusters
+        if decision=='only_good':
+            cluster_id = np.unique(cluster_info) # gives a list of the numbers of the "good" clusters, but we have to deleate 0 and 1...
+            cluster_id= np.delete(cluster_id, [0,1]) #... as 0 stands for clusters that were allocated to noise and 1 to MUA 
+        elif decision == 'exclude_noise':
+            cluster_id = np.unique(cluster_info) # gives a list of the numbers of the "good" clusters, but we have to deleate 0...
+            cluster_id= np.delete(cluster_id, [0]) #... as 0 stands for clusters that were allocated to noise
+        else:
+            cluster_id=decision  
+        #generate a boolean list indicating the indice of spikes that belong to "good" clusters
+        spike_indice=[False]*len(cluster_info)
+        for cluster in cluster_id:
+            spike_indice=np.logical_or(spike_indice, cluster_info==cluster)
+        #overwrite all_spiketimes and channel_info, keeping only "good" entries 
+        all_spiketimes=all_spiketimes[spike_indice]
+        channel_info=channel_info[spike_indice]
+        
+
+    #2. Extract and generate dictionary of all spike times that were registered by one channel 
+    spikes_dict=extract_spiketimes_per_channel(channel_info, all_spiketimes)
+
+    return spikes_dict
+
+
+'''
+extract_spiketimes_per_channel
+This function extracts the times of spikes that were detected by one channel 
+
+It first searches the incices of all spikes that were generated by one channel 
+and uses them to exract the spike times of all spikes that were detected by one channel
+
+input: 
+    1. Channel info: feature mask of spikes
+    2. spike_times
+
+output:
+    1. spikes_dict
+    A Dictionary containing the times of all spikes that were detected by a channel. 
+'''
+
+def extract_spiketimes_per_channel(feature_masks, spike_times):
+    #1. list of indices of spikes registered by one channel:
+    channels_dict={}
+    for channel in range(0,16):
+        indices=[]
+        for i in range(0,len(feature_masks)):
+            if (feature_masks[i][3*channel:(3*channel+3)]==1).all(): #if channel registered the spike...
+                indices.append(i) #...add its indice to the list
+        channels_dict['channel'+str(channel)]=indices
+    #2. extract spikes that were detected by one channel
+    spikes_dict={}
+    for channel in channels_dict:
+        spikes=[spike_times[i] for i in channels_dict[channel]] #extract all spike_times of the spikes with the correct indice
+        spikes_dict[channel]=spikes
+    return spikes_dict
+
+'''
+correct_spikes_dict
+
+This function extracts the timestamps of the desired session and corrects them. 
+Input: 	-mainPath
+		-session: name of the session (foldername) that one wants to analyse
+		-spikes_dict
+Output: -corrected spikes_dict
+
+The klusta algorithm reads the data of the whole experiment folder after folder in an alphabetic order and continues with the counting of the timestamps. 
+Therefore the timestamps of a session are shifted by the duration of all folders klusta analysed before that session. 
+One has therefore to subtract the duration of the sessions from the timepoints. 
+
+This function follows the same order through the folders as klusta does. It adds up all durations of the sessions coming before the session of interest
+and subtracts that from the spike timestamps in the spikes_dictionary
+'''
+
+def correct_spikes_dict(mainPath, session, spikes_dict):
+    correction=0
+    dirs = os.listdir(mainPath)
+    for folder in (folder for folder in sorted(dirs) if ((folder != 'analysis_files') and (folder != 'analyzed') and (folder != 'other'))):
+        filepath=mainPath+folder+'/time.dat'
+        duration=len(np.fromfile(open(filepath, 'rb'), np.int32)) #duration of the session
+        if folder==session: #one has reached the session of interest
+            for channel in spikes_dict:
+                times=[]
+                for i in spikes_dict[channel]:
+                    if (i > correction and i<(correction+duration)): #extract the timepoints of the session..
+                        times.append(i)
+                spikes_dict[channel]=[x-correction for x in times] #..and correct them 
+            break
+			
+        else: 
+            correction=correction+duration #one has not yet reached the session of interest
+            
+    return spikes_dict
+
+
