@@ -1,3 +1,22 @@
+"""
+This script merges PSTH graphs of several analyzed experiments. Main path should be the parent directory which includes all the data folders that is used in the process. Script can also sort the electrodes wrt PSTH values in a given integration interval and calculate only for given number of top-valued electrodes.
+
+    Reqired Files:
+        psthParamters: Contains PSTH analysis parameters
+        path_for_psth_all_electrodes: Contains electrode-wise PSTH values.
+        
+    Input:
+        main_path: Parent directory to the data folders.
+        integration_start, integration_end: A part of evoked LFP window whose PSTH values integrated to sort highest responding electrodes
+        bumber_of_electrodes: Indicates how many electrodes will be used from the sorted electrodes.
+
+    Outputs:
+        Creates electrode-wise merged PSTH graphs. If there were a mismatched parameter, it would raise an error.
+
+    Created on  July , 2018
+    Author: Abdulkadir Gokce - Please contact him or Mehmet Ozdas in case of any questions.
+"""
+
 import os
 import numpy as np
 import pickle
@@ -8,10 +27,10 @@ import matplotlib.pyplot as plt
 #####Parameters for the script
 #main_path ='/media/yaniklab/05d01d78-2bd6-4a4e-b573-df49ccacb71c/Analyzed-Cleaned/PBS/'
 main_path ='/media/yaniklab/05d01d78-2bd6-4a4e-b573-df49ccacb71c/Analyzed-Cleaned/Muscimol/'
-electrode_wise = True
 integration_start = 0
 integration_end = 40
 number_of_electrodes = 3
+###########
 
 dirs = os.listdir(main_path)
 to_be_skipped = ['other','average_PSTH']
@@ -97,15 +116,15 @@ psth_max_responding_electrodes = np.zeros(( len(data_folders), number_of_groups,
 
 for folder_number in range(len(data_folders)):
     experiment_id = data_folders[folder_number].rpartition('_')[2]
-    if(electrode_wise) == True:
-        PSTH_path = main_path + data_folders[folder_number] + '/analyzed/PSTH'
-        PSTH_for_group_folders = os.listdir(PSTH_path)
 
-        for group in range(number_of_groups):
-            
-            PSTH_group_path = PSTH_path + '/probe_0_group_{}'.format(group)
-            path_for_psth_all_electrodes = PSTH_group_path + '/{0}_probe_0_group_{1}_psth_all_electrodes.npy'.format(experiment_id,group)
-            psth_all[folder_number,group] = np.load(path_for_psth_all_electrodes)[:, :number_of_window, :]
+    PSTH_path = main_path + data_folders[folder_number] + '/analyzed/PSTH'
+    PSTH_for_group_folders = os.listdir(PSTH_path)
+
+    for group in range(number_of_groups):
+        
+        PSTH_group_path = PSTH_path + '/probe_0_group_{}'.format(group)
+        path_for_psth_all_electrodes = PSTH_group_path + '/{0}_probe_0_group_{1}_psth_all_electrodes.npy'.format(experiment_id,group)
+        psth_all[folder_number,group] = np.load(path_for_psth_all_electrodes)[:, :number_of_window, :]
 
 
 integ_index_start = int(integration_start + pre_interval)
