@@ -136,8 +136,6 @@ def frequency_domain_analyses(freqParams):
                 svg_spectrogram_path = '{0}/spectrogram'.format(svg_path)
 
 
-
-
                 if (os.path.exists(save_path)):
                     shutil.rmtree(save_path)
 
