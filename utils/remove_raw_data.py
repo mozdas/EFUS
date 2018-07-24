@@ -21,7 +21,7 @@ main_path = '/media/yaniklab/05d01d78-2bd6-4a4e-b573-df49ccacb71c/2018_04_12_FUS
 #########
 """
 
-def cleanup_data(main_path):
+def cleanup_data(main_path, keep_spike_info):
 
     dirs = os.listdir(main_path)
     directories_to_skip = ['analyzed', 'other', 'log.txt', 'notes.txt', '.DS_Store', '._.DS_Store'] #Folder that needs to be intact
@@ -36,7 +36,9 @@ def cleanup_data(main_path):
                 if(os.path.isdir(analysis_files_group_path)): #Only iterate through folders of analysis files for groups, if there is a paramsDict.p, skipped it
                     analysis_files_group_dirs = os.listdir(analysis_files_group_path)
                     #Keeping the required files for PSTH Analysis
-                    files_to_keep = [analysis_folder_for_group+'.clu.0', analysis_folder_for_group+'.kwik', analysis_folder_for_group+'.kwx', analysis_folder_for_group+'_spikeinfo.pickle']        
+                    files_to_keep = [analysis_folder_for_group+'.clu.0', analysis_folder_for_group+'.kwik', analysis_folder_for_group+'.kwx', analysis_folder_for_group+'_spikeinfo.pickle']
+                    if(keep_spike_info == True):
+                        files_to_keep.append(analysis_folder_for_group + '.dat' )      
 
                     for file_to_remove in analysis_files_group_dirs:
                         if(file_to_remove not in files_to_keep):
