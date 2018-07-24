@@ -174,7 +174,7 @@ def automated_window_lfp(main_path, tw, group_to_plot, trodes_to_plot, y_scale, 
         lfp_averages = numpy.zeros((p['probes'],p['shanks'],p['nr_of_electrodes_per_group'],num_window))
         
 
-        #Most the variable names that is used for denoting the values of the electrodes of interest start with 'list_' prefix
+        #Most of the variable names that is used for denoting the values of the electrodes of interest start with 'list_' prefix
         evoked_window_correction = numpy.zeros((num_window, len(evoked[0])))
         evoked_window_amps_corrected = np.zeros((p['probes'], p['shanks'], p['nr_of_electrodes_per_group'], num_window))
         list_evoked_window = np.zeros((num_window, len(trodes_to_plot), len(evoked[0][0])))
