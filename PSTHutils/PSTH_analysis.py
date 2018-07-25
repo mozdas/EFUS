@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 #from matplotlib.cm import viridis
 import shutil
 import math
-from spikes_dict_utils import *
+from spikeSortingUtils.spikes_dict_utils import get_spiketimes_per_channel
 
 
 
@@ -73,8 +73,11 @@ def psth_analysis(psthParameters):
         if os.path.exists(analyzed_path):
            shutil.rmtree(analyzed_path)
 
-        if not os.path.exists(mainPath + 'analyzed/PSTH/'):
-               os.mkdir(mainPath + 'analyzed/PSTH/')
+        if not os.path.exists(mainPath + 'analyzed'):
+               os.mkdir(mainPath + 'analyzed') 
+
+        if not os.path.exists(mainPath + 'analyzed/PSTH'):
+               os.mkdir(mainPath + 'analyzed/PSTH')
 
         if not os.path.exists(analyzed_path):
                os.mkdir(analyzed_path)   
