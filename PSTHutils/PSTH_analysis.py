@@ -74,7 +74,7 @@ def psth_analysis(psthParameters):
            shutil.rmtree(analyzed_path)
 
         if not os.path.exists(mainPath + 'analyzed'):
-               os.mkdir(mainPath + 'analyzed') 
+               os.mkdir(analyzed + 'mainPath') 
 
         if not os.path.exists(mainPath + 'analyzed/PSTH'):
                os.mkdir(mainPath + 'analyzed/PSTH')
@@ -248,7 +248,7 @@ def psth_analysis(psthParameters):
                         sp=plt.subplot(1, 3, j+1)
                         sp.bar(bins, psth_all_units_values[unit][i*3 + j])
                         plt.subplots_adjust(top=0.85) #Adjust the subplot to prevent overlapping
-                        plt.subplots_adjust(wspace=0.2)
+                        plt.subplots_adjust(wspace=0.5)
                         sp.set_ylabel('Spikes/Stim', fontsize=8)
                         sp.set_xlabel('Time(ms)', fontsize=8)
                         sp.tick_params(axis='both', which='major', labelsize=6)
@@ -261,9 +261,14 @@ def psth_analysis(psthParameters):
                         sp.set_ylim(0, y_max)
                         sp.set_xlim(-psthParameters['pre_interval_ms'], psthParameters['post_interval_ms'])
 
-                fig.suptitle('Group-{0} Unit-{1}, Figure-{2}'.format(group,psth_all_units_keys[unit],i+1))
-                plt.savefig(analyzed_path+'/PSTH_all_units_pdf/{0}_figure-{1}.pdf'.format(psth_all_units_keys[unit], i+1), format='pdf')
-                plt.savefig(analyzed_path+'/PSTH_all_units_svg/{0}_figure-{1}.svg'.format(psth_all_units_keys[unit], i+1), format='svg')
+                if(psth_all_units_keys[unit] == 'unit1'):
+                    fig.suptitle('Group-{0} Mean of All MUA, Figure-{2}'.format(group,i+1))
+                    plt.savefig(analyzed_path+'/PSTH_all_units_pdf/mean_of_all_mua_figure-{1}.pdf'.format(i+1), format='pdf')
+                    plt.savefig(analyzed_path+'/PSTH_all_units_svg/mean_of_all_mua_figure-{1}.svg'.format(i+1), format='svg')
+                else:
+                    fig.suptitle('Group-{0} Unit-{1}, Figure-{2}'.format(group,psth_all_units_keys[unit],i+1))
+                    plt.savefig(analyzed_path+'/PSTH_all_units_pdf/{0}_figure-{1}.pdf'.format(psth_all_units_keys[unit], i+1), format='pdf')
+                    plt.savefig(analyzed_path+'/PSTH_all_units_svg/{0}_figure-{1}.svg'.format(psth_all_units_keys[unit], i+1), format='svg')
                 plt.close(fig)
                 print('Finished: {0}, Figure-{1}'.format(psth_all_units_keys[unit], i+1))
 
@@ -345,9 +350,14 @@ def psth_analysis(psthParameters):
                 y_max = np.max(psth_all_units_values_user_window[unit], axis=0) #PSTH Analysis for all electrodes
                 plt.ylim(0, y_max)
                 plt.xlim(-psthParameters['pre_interval_ms'], psthParameters['post_interval_ms'])
-                plt.suptitle('Group-{0} Unit-{1}, Interval-{2}:{3}'.format(group, psth_all_units_keys[unit], start_min, end_min))
-                plt.savefig(analyzed_path+'/PSTH_all_units_user_window_pdf/{0}_interval-{1}-{2}.pdf'.format(psth_all_units_keys[unit], start_min, end_min), format='pdf')
-                plt.savefig(analyzed_path+'/PSTH_all_units_user_window_svg/{0}_interval-{1}-{2}.svg'.format(psth_all_units_keys[unit], start_min, end_min), format='svg')
+                if(psth_all_units_keys[unit] == 'unit1'):
+                    plt.suptitle('Group-{0} Mean of All MUA, Interval-{2}:{3}'.format(group, start_min, end_min))
+                    plt.savefig(analyzed_path+'/PSTH_all_units_user_window_pdf/mean_of_all_mua_interval-{1}-{2}.pdf'.format(start_min, end_min), format='pdf')
+                    plt.savefig(analyzed_path+'/PSTH_all_units_user_window_svg/mean_of_all_mua_interval-{1}-{2}.svg'.format(start_min, end_min), format='svg')
+                else:
+                    plt.suptitle('Group-{0} Unit-{1}, Interval-{2}:{3}'.format(group, psth_all_units_keys[unit], start_min, end_min))
+                    plt.savefig(analyzed_path+'/PSTH_all_units_user_window_pdf/{0}_interval-{1}-{2}.pdf'.format(psth_all_units_keys[unit], start_min, end_min), format='pdf')
+                    plt.savefig(analyzed_path+'/PSTH_all_units_user_window_svg/{0}_interval-{1}-{2}.svg'.format(psth_all_units_keys[unit], start_min, end_min), format='svg')
                 plt.close(fig)
                 print('Finished: {0},  Interval-{1}:{2}'.format(psth_all_units_keys[unit], start_min, end_min))
             #Save PSTH Analysis results as pickle file, use script for combining the result of several recordings

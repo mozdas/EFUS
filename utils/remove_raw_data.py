@@ -6,6 +6,7 @@
               To rerun Evoked LFP Analysis and Spike Sorting one must use raw data and start from the beginnig for analyses.
     This script will left required files for Automated Window LFP and PSTH algorithms for further analysis.
     After executing this script on a folder, Automated Window LFP and PSTH algorithms can be applied to this folder.
+    If you'd like to do manuel clustering later, set keep_spike_info == True so that it will keep .dat file which this file consumes huge disk's memory.
 
 
     Created on Friday, July 6th, 2018
@@ -38,7 +39,7 @@ def cleanup_data(main_path, keep_spike_info):
                     #Keeping the required files for PSTH Analysis
                     files_to_keep = [analysis_folder_for_group+'.clu.0', analysis_folder_for_group+'.kwik', analysis_folder_for_group+'.kwx', analysis_folder_for_group+'_spikeinfo.pickle']
                     if(keep_spike_info == True):
-                        files_to_keep.append(analysis_folder_for_group + '.dat' )      
+                        files_to_keep.append(analysis_folder_for_group + '.dat')
 
                     for file_to_remove in analysis_files_group_dirs:
                         if(file_to_remove not in files_to_keep):

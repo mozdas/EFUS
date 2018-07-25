@@ -29,4 +29,4 @@ for folder in (folder for folder in dirs if ((folder != 'log.txt') and (folder !
 
     for probe in range(p['probes']):
         for group in range(p['nr_of_groups']):
-            retain_cluster_info(probe,group,p)
+            retain_cluster_info(probe,group,p,mainPath)
