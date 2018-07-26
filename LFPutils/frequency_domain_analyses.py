@@ -149,49 +149,37 @@ def frequency_domain_analyses(freqParams):
 
                 if not (os.path.exists(analyzed_path)):
                     os.mkdir(analyzed_path)
-
                 if not (os.path.exists(analyzed_folder_path)):
                     os.mkdir(analyzed_folder_path)
-
                 if not (os.path.exists(analyzed_group_path)):
                     os.mkdir(analyzed_group_path)
-
                 if not (os.path.exists(save_path)):
                     os.mkdir(save_path)
 
                 if not (os.path.exists(pdf_path)):
                     os.mkdir(pdf_path)
-
                 if not (os.path.exists(pdf_periodogram_path)):
                     os.mkdir(pdf_periodogram_path)
-
                 if not (os.path.exists(pdf_fourier_analysis_path)):
                     os.mkdir(pdf_fourier_analysis_path)
-
                 if not (os.path.exists(pdf_spectrogram_path)):
                     os.mkdir(pdf_spectrogram_path)
 
                 if not (os.path.exists(svg_path)):
                     os.mkdir(svg_path)
-
                 if not (os.path.exists(svg_periodogram_path)):
                     os.mkdir(svg_periodogram_path)
-
                 if not (os.path.exists(svg_fourier_analysis_path)):
                     os.mkdir(svg_fourier_analysis_path)
-
                 if not (os.path.exists(svg_spectrogram_path)):
                     os.mkdir(svg_spectrogram_path)
 
                 if not (os.path.exists(png_path)):
                     os.mkdir(png_path)
-
                 if not (os.path.exists(png_periodogram_path)):
                     os.mkdir(png_periodogram_path)
-
                 if not (os.path.exists(png_fourier_analysis_path)):
                     os.mkdir(png_fourier_analysis_path)
-
                 if not (os.path.exists(png_spectrogram_path)):
                     os.mkdir(png_spectrogram_path)
 
