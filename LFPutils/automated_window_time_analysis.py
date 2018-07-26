@@ -227,7 +227,7 @@ def automated_window_lfp(main_path, tw, group_to_plot, trodes_to_plot, y_scale, 
                  #Combined error for multiple sample groups. See Error class above for further information.
                  list_window_errs_combined[window] = Error(evoked_window[:, trodes_to_plot, :], evoked_window_err[window, trodes_to_plot, :]).combining_errors()
                  figure() 
-                 title('Average Amplitute Graph of the List of Electrodes')
+                 title('Average Amplitute Graph / List of Electrodes')
                  plot(evoked_LFP_timerange, list_evoked_window_avg[window],'k-')
                  xlabel('Time (ms)')
                  ylabel('Peak voltage (uV)')
@@ -246,7 +246,7 @@ def automated_window_lfp(main_path, tw, group_to_plot, trodes_to_plot, y_scale, 
              #Plot the figure for the average evoked LFP in this time window
              for trode in trodes_to_plot:
                  figure()
-                 title('Average Amplitute Graph of the Electrode-{0} / Window-{1}'.format(trode,window))
+                 title('Average Amplitute Graph / Electrode-{0}, Window-{1}'.format(trode,window))
                  plot(evoked_LFP_timerange, evoked_window_avgs[window][trode],'k-')
                  xlabel('Time (ms)')
                  ylabel('Peak voltage (uV)')
@@ -282,7 +282,7 @@ def automated_window_lfp(main_path, tw, group_to_plot, trodes_to_plot, y_scale, 
         if(len(trodes_to_plot)>1):
 
             figure() #Plot the Normalized Amplitute Graph of the List of Electrodes
-            title('Normalized Amplitute Graph of the List of Electrodes')
+            title('Normalized Amplitute Graph / List of Electrodes')
             plot(windows, list_evoked_window_amps_normalized[probe][group],'k-')
             xlabel('Time (min)')
             ylabel('-% wrt iniatial 10 minute')
@@ -298,13 +298,13 @@ def automated_window_lfp(main_path, tw, group_to_plot, trodes_to_plot, y_scale, 
             axes().set_yticks(y_ticks, minor=True)
             axes().grid(which='both')
             errorbar(windows, list_evoked_window_amps_normalized[probe][group], yerr = list_peaks_errs_normalized[probe][group])
-            print('\nPlotting the Normalized Amplitute Graph of the List of Electrodes')
+            print('\nPlotting the Normalized Amplitute Graph / List of Electrodes')
             savefig(analyzed_path_for_group + 'tw_pdf_format/' +'normalized_for_selected_electrodes_time_window.pdf', format = 'pdf')
             savefig(analyzed_path_for_group + 'tw_svg_format/' +'normalized_for_selected_electrodes_time_window.svg', format = 'svg')
             close()
 
             figure()#Plot the Average Automated Time Window Analysis of the List of Electrodes
-            title('Average Automated Time Window Analysis of the List of Electrodes')
+            title('Automated Time Window Analysis / List of Electrodes')
             plot(windows, np.mean(evoked_window_amps_corrected[:, :, trodes_to_plot], axis=2)[probe][group], 'k-')
             xlabel('Time (min)')
             ylabel('Peak voltage (uV)')
@@ -320,7 +320,7 @@ def automated_window_lfp(main_path, tw, group_to_plot, trodes_to_plot, y_scale, 
             axes().set_yticks(y_ticks, minor=True)
             axes().grid(which='both')
             errorbar(windows, np.mean(evoked_window_amps_corrected[:, :, trodes_to_plot], axis=2)[probe][group], yerr = list_peaks_errs_combined[probe][group], color='olive')
-            print('Plotting the Average Automated Time Window Analysis of the List of Electrodes\n')
+            print('Plotting the Automated Time Window Analysis / List of Electrodes\n')
             savefig(analyzed_path_for_group + 'tw_svg_format/' + 'time_windows_list.svg', format = 'svg')
             savefig(analyzed_path_for_group + 'tw_pdf_format/' + 'time_windows_list.pdf', format = 'pdf')
             list_lfp_averages[probe][group] = np.mean(evoked_window_amps_corrected[:, :, trodes_to_plot], axis=2)[probe][group]

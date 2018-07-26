@@ -201,7 +201,7 @@ def psth_analysis(psthParameters):
                         sp.set_ylim(0, y_max)
                         sp.set_xlim(-psthParameters['pre_interval_ms'], psthParameters['post_interval_ms'])
 
-                fig.suptitle('Group-{0} Electrode-{1}, Figure-{2}'.format(group,trode,i+1))
+                fig.suptitle('PSTH Graph / Group-{0} Electrode-{1}, Figure-{2}'.format(group,trode,i+1))
                 plt.savefig(analyzed_path+'/PSTH_all_electrodes_pdf/electrode-{0}_figure-{1}.pdf'.format(trode, i+1), format='pdf')
                 plt.savefig(analyzed_path+'/PSTH_all_electrodes_svg/electrode-{0}_figure-{1}.svg'.format(trode, i+1), format='svg')
                 plt.close(fig)
@@ -262,11 +262,11 @@ def psth_analysis(psthParameters):
                         sp.set_xlim(-psthParameters['pre_interval_ms'], psthParameters['post_interval_ms'])
 
                 if(psth_all_units_keys[unit] == 'unit1'):
-                    fig.suptitle('Group-{0} Mean of All MUA, Figure-{2}'.format(group,i+1))
+                    fig.suptitle('PSTH Graph / Group-{0} Mean of All MUA, Figure-{2}'.format(group,i+1))
                     plt.savefig(analyzed_path+'/PSTH_all_units_pdf/mean_of_all_mua_figure-{1}.pdf'.format(i+1), format='pdf')
                     plt.savefig(analyzed_path+'/PSTH_all_units_svg/mean_of_all_mua_figure-{1}.svg'.format(i+1), format='svg')
                 else:
-                    fig.suptitle('Group-{0} Unit-{1}, Figure-{2}'.format(group,psth_all_units_keys[unit],i+1))
+                    fig.suptitle('PSTH Graph / Group-{0} Unit-{1}, Figure-{2}'.format(group,psth_all_units_keys[unit],i+1))
                     plt.savefig(analyzed_path+'/PSTH_all_units_pdf/{0}_figure-{1}.pdf'.format(psth_all_units_keys[unit], i+1), format='pdf')
                     plt.savefig(analyzed_path+'/PSTH_all_units_svg/{0}_figure-{1}.svg'.format(psth_all_units_keys[unit], i+1), format='svg')
                 plt.close(fig)
@@ -310,7 +310,7 @@ def psth_analysis(psthParameters):
                 plt.ylim(0, y_max)
                 plt.xlim(-psthParameters['pre_interval_ms'], psthParameters['post_interval_ms'])
 
-                plt.suptitle('Group-{0} Electrode-{1}, Interval-{2}:{3}'.format(group,trode, start_min, end_min))
+                plt.suptitle('PSTH Graph / Group-{0} Electrode-{1}, Interval-{2}:{3}'.format(group,trode, start_min, end_min))
                 plt.savefig(analyzed_path+'/PSTH_all_electrodes_user_window_pdf/electrode-{0}_interval-{1}-{2}.pdf'.format(trode, start_min, end_min), format='pdf')
                 plt.savefig(analyzed_path+'/PSTH_all_electrodes_user_window_svg/electrode-{0}_interval-{1}-{2}.svg'.format(trode, start_min, end_min), format='svg')
                 plt.close(fig)
@@ -351,11 +351,11 @@ def psth_analysis(psthParameters):
                 plt.ylim(0, y_max)
                 plt.xlim(-psthParameters['pre_interval_ms'], psthParameters['post_interval_ms'])
                 if(psth_all_units_keys[unit] == 'unit1'):
-                    plt.suptitle('Group-{0} Mean of All MUA, Interval-{2}:{3}'.format(group, start_min, end_min))
+                    plt.suptitle('PSTH Graph / Group-{0} Mean of All MUA, Interval-{2}:{3}'.format(group, start_min, end_min))
                     plt.savefig(analyzed_path+'/PSTH_all_units_user_window_pdf/mean_of_all_mua_interval-{1}-{2}.pdf'.format(start_min, end_min), format='pdf')
                     plt.savefig(analyzed_path+'/PSTH_all_units_user_window_svg/mean_of_all_mua_interval-{1}-{2}.svg'.format(start_min, end_min), format='svg')
                 else:
-                    plt.suptitle('Group-{0} Unit-{1}, Interval-{2}:{3}'.format(group, psth_all_units_keys[unit], start_min, end_min))
+                    plt.suptitle('PSTH Graph / Group-{0} Unit-{1}, Interval-{2}:{3}'.format(group, psth_all_units_keys[unit], start_min, end_min))
                     plt.savefig(analyzed_path+'/PSTH_all_units_user_window_pdf/{0}_interval-{1}-{2}.pdf'.format(psth_all_units_keys[unit], start_min, end_min), format='pdf')
                     plt.savefig(analyzed_path+'/PSTH_all_units_user_window_svg/{0}_interval-{1}-{2}.svg'.format(psth_all_units_keys[unit], start_min, end_min), format='svg')
                 plt.close(fig)
