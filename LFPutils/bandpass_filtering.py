@@ -88,7 +88,6 @@ def bandpass_filtering(bandpassParams):
 
 
         for window in range(num_window):
-            print("\nTime: {0}".format(window))
             #Finding all the evoked data for which the time stamp falls in the window of interest
             evoked_window = filtered_evoked[np.all([stim_timestamps > window * len_time_window, stim_timestamps < (window + 1) * len_time_window], axis = 0)]
             evoked_window_avgs[window] = np.mean(evoked_window, axis=0) #  mean of evoked window

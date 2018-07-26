@@ -65,6 +65,7 @@ def frequency_domain_analyses(freqParams):
     n_perseg = freqParams['nperseg']
     n_overlap = freqParams['noverlap']
     n_fft = freqParams['nfft']
+    png_dpi = 2000
 
     directories_to_skip = ['analyzed', 'analysis_files', 'other', 'log.txt', 'notes.txt', '.DS_Store', '._.DS_Store']
     dirs = os.listdir(main_path)
@@ -126,14 +127,21 @@ def frequency_domain_analyses(freqParams):
                 analyzed_folder_path = '{0}/{1}'.format(analyzed_path, folder)
                 analyzed_group_path = '{0}/probe_{1}_group_{2}'.format(analyzed_folder_path, probe, group)
                 save_path = '{0}/frequency_domain_analyses'.format(analyzed_group_path)
+                
                 pdf_path = '{0}/pdf'.format(save_path)
-                svg_path = '{0}/svg'.format(save_path)
                 pdf_periodogram_path = '{0}/periodogram'.format(pdf_path)
                 pdf_fourier_analysis_path = '{0}/fourier_analysis'.format(pdf_path)
                 pdf_spectrogram_path = '{0}/spectrogram'.format(pdf_path)
+
+                svg_path = '{0}/svg'.format(save_path)
                 svg_periodogram_path = '{0}/periodogram'.format(svg_path)
                 svg_fourier_analysis_path = '{0}/fourier_analysis'.format(svg_path)
                 svg_spectrogram_path = '{0}/spectrogram'.format(svg_path)
+
+                png_path = '{0}/png'.format(save_path)
+                png_periodogram_path = '{0}/periodogram'.format(png_path)
+                png_fourier_analysis_path = '{0}/fourier_analysis'.format(png_path)
+                png_spectrogram_path = '{0}/spectrogram'.format(png_path)
 
 
                 if (os.path.exists(save_path)):
@@ -154,9 +162,6 @@ def frequency_domain_analyses(freqParams):
                 if not (os.path.exists(pdf_path)):
                     os.mkdir(pdf_path)
 
-                if not (os.path.exists(svg_path)):
-                    os.mkdir(svg_path)
-
                 if not (os.path.exists(pdf_periodogram_path)):
                     os.mkdir(pdf_periodogram_path)
 
@@ -166,6 +171,9 @@ def frequency_domain_analyses(freqParams):
                 if not (os.path.exists(pdf_spectrogram_path)):
                     os.mkdir(pdf_spectrogram_path)
 
+                if not (os.path.exists(svg_path)):
+                    os.mkdir(svg_path)
+
                 if not (os.path.exists(svg_periodogram_path)):
                     os.mkdir(svg_periodogram_path)
 
@@ -174,6 +182,18 @@ def frequency_domain_analyses(freqParams):
 
                 if not (os.path.exists(svg_spectrogram_path)):
                     os.mkdir(svg_spectrogram_path)
+
+                if not (os.path.exists(png_path)):
+                    os.mkdir(png_path)
+
+                if not (os.path.exists(png_periodogram_path)):
+                    os.mkdir(png_periodogram_path)
+
+                if not (os.path.exists(png_fourier_analysis_path)):
+                    os.mkdir(png_fourier_analysis_path)
+
+                if not (os.path.exists(png_spectrogram_path)):
+                    os.mkdir(png_spectrogram_path)
 
             
 
@@ -196,6 +216,7 @@ def frequency_domain_analyses(freqParams):
                             plt.suptitle('Periodogram Electrode-{0} Figure-{1}'.format(trode, i))
                             plt.savefig('{0}/electrode-{1}_figure-{2}.pdf'.format(pdf_periodogram_path, trode, i+1), format='pdf')
                             plt.savefig('{0}/electrode-{1}_figure-{2}.svg'.format(svg_periodogram_path, trode, i+1), format='svg')
+                            plt.savefig('{0}/electrode-{1}_figure-{2}.png'.format(png_periodogram_path, trode, i+1), format='png', dpi=png_dpi)
                             plt.close()
                         print('Periodogram figures are completed for Probe-{0} Group-{1} Electrode-{2}\n'.format(probe, group, trode))
 
@@ -216,6 +237,7 @@ def frequency_domain_analyses(freqParams):
                             plt.suptitle('Fourier Analysis Electrode-{0} Figure-{1}'.format(trode, i))
                             plt.savefig('{0}/electrode-{1}_figure-{2}.pdf'.format(pdf_fourier_analysis_path, trode, i+1), format='pdf')
                             plt.savefig('{0}/electrode-{1}_figure-{2}.svg'.format(svg_fourier_analysis_path, trode, i+1), format='svg')
+                            plt.savefig('{0}/electrode-{1}_figure-{2}.png'.format(png_fourier_analysis_path, trode, i+1), format='png', dpi=png_dpi)
                             plt.close()
                         print('Fourier Analysis figures are completed for Probe-{0} Group-{1} Electrode-{2}\n'.format(probe, group, trode))
 
@@ -242,6 +264,7 @@ def frequency_domain_analyses(freqParams):
                         plt.suptitle('Power Spectral Density Electrode-{0} {1}'.format(trode, '($Log_{10}$ Scale)'))
                         plt.savefig('{0}/electrode-{1}_log.pdf'.format(pdf_spectrogram_path, trode), format='pdf')
                         plt.savefig('{0}/electrode-{1}_log.svg'.format(svg_spectrogram_path, trode), format='svg')
+                        plt.savefig('{0}/electrode-{1}_log.png'.format(png_spectrogram_path, trode), format='png', dpi=png_dpi)
                         plt.close()
 
                         print('Spectrogram figures are completed for Probe-{0} Group-{1} Electrode-{2} - Log Scale\n'.format(probe, group, trode))
@@ -267,6 +290,7 @@ def frequency_domain_analyses(freqParams):
                         plt.suptitle('Power Spectral Density Electrode-{0}'.format(trode))
                         plt.savefig('{0}/electrode-{1}.pdf'.format(pdf_spectrogram_path, trode), format='pdf')
                         plt.savefig('{0}/electrode-{1}.svg'.format(svg_spectrogram_path, trode), format='svg')
+                        plt.savefig('{0}/electrode-{1}.png'.format(png_spectrogram_path, trode), format='png', dpi=png_dpi)
                         plt.close()
                                 
                     print('Spectrogram figures are completed for Probe-{0} Group-{1} Electrode-{2}\n'.format(probe, group, trode))
