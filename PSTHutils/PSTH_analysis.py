@@ -262,9 +262,9 @@ def psth_analysis(psthParameters):
                         sp.set_xlim(-psthParameters['pre_interval_ms'], psthParameters['post_interval_ms'])
 
                 if(psth_all_units_keys[unit] == 'unit1'):
-                    fig.suptitle('PSTH Graph / Group-{0} Mean of All MUA, Figure-{2}'.format(group,i+1))
-                    plt.savefig(analyzed_path+'/PSTH_all_units_pdf/mean_of_all_mua_figure-{1}.pdf'.format(i+1), format='pdf')
-                    plt.savefig(analyzed_path+'/PSTH_all_units_svg/mean_of_all_mua_figure-{1}.svg'.format(i+1), format='svg')
+                    fig.suptitle('PSTH Graph / Group-{0} Mean of All MUA, Figure-{1}'.format(group,i+1))
+                    plt.savefig(analyzed_path+'/PSTH_all_units_pdf/mean_of_all_mua_figure-{0}.pdf'.format(i+1), format='pdf')
+                    plt.savefig(analyzed_path+'/PSTH_all_units_svg/mean_of_all_mua_figure-{0}.svg'.format(i+1), format='svg')
                 else:
                     fig.suptitle('PSTH Graph / Group-{0} Unit-{1}, Figure-{2}'.format(group,psth_all_units_keys[unit],i+1))
                     plt.savefig(analyzed_path+'/PSTH_all_units_pdf/{0}_figure-{1}.pdf'.format(psth_all_units_keys[unit], i+1), format='pdf')
