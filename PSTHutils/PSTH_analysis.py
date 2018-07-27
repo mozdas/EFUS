@@ -218,7 +218,7 @@ def psth_analysis(psthParameters):
         spike_timestamps = pickle.load(open(mainPath+'analysis_files/probe_{0}_group_{1}/probe_{0}_group_{1}_spikeinfo.pickle'.format(probe,group), 'rb'))
         psth_all_units_values = np.zeros(( len(spike_timestamps['units']), number_of_windows, math.ceil(psthParameters['window_size'] / psthParameters['bin_size']) ))
         psth_all_units_keys = ['']*len(spike_timestamps['units'])
-        keys = list(spike_timestamps['units'].keys())
+        keys = sorted(list(spike_timestamps['units'].keys()))
         for unit in range(len(spike_timestamps['units'])):
             key = keys[unit]
             spike_times = spike_timestamps['units'][key][0]
@@ -237,7 +237,7 @@ def psth_analysis(psthParameters):
                 #Divide the PSTH value of the window by the number of stimulation in this window
                 psth_all_units_values[unit][window] = psth_all_units_values[unit][window] / len(stim_window)
             psth_all_units_keys[unit] = key
-            print('PSTH Analysis for unit-{} is done'.format(key))
+            print('PSTH Analysis for {} is done'.format(key))
         
         print('\nGenerating unit-wise PSTH graphs')
         for unit in range(len(psth_all_units_values)):
@@ -262,9 +262,13 @@ def psth_analysis(psthParameters):
                         sp.set_xlim(-psthParameters['pre_interval_ms'], psthParameters['post_interval_ms'])
 
                 if(psth_all_units_keys[unit] == 'unit1'):
-                    fig.suptitle('PSTH Graph / Group-{0} Mean of All MUA, Figure-{1}'.format(group,i+1))
-                    plt.savefig(analyzed_path+'/PSTH_all_units_pdf/mean_of_all_mua_figure-{0}.pdf'.format(i+1), format='pdf')
-                    plt.savefig(analyzed_path+'/PSTH_all_units_svg/mean_of_all_mua_figure-{0}.svg'.format(i+1), format='svg')
+                    fig.suptitle('PSTH Graph / Group-{0} All MUA, Figure-{1}'.format(group,i+1))
+                    plt.savefig(analyzed_path+'/PSTH_all_units_pdf/all_mua_figure-{0}.pdf'.format(i+1), format='pdf')
+                    plt.savefig(analyzed_path+'/PSTH_all_units_svg/all_mua_figure-{0}.svg'.format(i+1), format='svg')
+                elif(psth_all_units_keys[unit] == 'unit0'):
+                    fig.suptitle('PSTH Graph / Group-{0} All Noise, Figure-{1}'.format(group,i+1))
+                    plt.savefig(analyzed_path+'/PSTH_all_units_pdf/all_noise_figure-{0}.pdf'.format(i+1), format='pdf')
+                    plt.savefig(analyzed_path+'/PSTH_all_units_svg/all_noise_figure-{0}.svg'.format(i+1), format='svg')
                 else:
                     fig.suptitle('PSTH Graph / Group-{0} Unit-{1}, Figure-{2}'.format(group,psth_all_units_keys[unit],i+1))
                     plt.savefig(analyzed_path+'/PSTH_all_units_pdf/{0}_figure-{1}.pdf'.format(psth_all_units_keys[unit], i+1), format='pdf')
@@ -350,10 +354,15 @@ def psth_analysis(psthParameters):
                 y_max = np.max(psth_all_units_values_user_window[unit], axis=0) #PSTH Analysis for all electrodes
                 plt.ylim(0, y_max)
                 plt.xlim(-psthParameters['pre_interval_ms'], psthParameters['post_interval_ms'])
+
                 if(psth_all_units_keys[unit] == 'unit1'):
-                    plt.suptitle('PSTH Graph / Group-{0} Mean of All MUA, Interval-{2}:{3}'.format(group, start_min, end_min))
-                    plt.savefig(analyzed_path+'/PSTH_all_units_user_window_pdf/mean_of_all_mua_interval-{1}-{2}.pdf'.format(start_min, end_min), format='pdf')
-                    plt.savefig(analyzed_path+'/PSTH_all_units_user_window_svg/mean_of_all_mua_interval-{1}-{2}.svg'.format(start_min, end_min), format='svg')
+                    plt.suptitle('PSTH Graph / Group-{0} All MUA, Interval-{2}:{3}'.format(group, start_min, end_min))
+                    plt.savefig(analyzed_path+'/PSTH_all_units_user_window_pdf/all_mua_interval-{1}-{2}.pdf'.format(start_min, end_min), format='pdf')
+                    plt.savefig(analyzed_path+'/PSTH_all_units_user_window_svg/all_mua_interval-{1}-{2}.svg'.format(start_min, end_min), format='svg')
+                elif(psth_all_units_keys[unit] == 'unit0'):
+                    plt.suptitle('PSTH Graph / Group-{0} All Noise, Interval-{2}:{3}'.format(group, start_min, end_min))
+                    plt.savefig(analyzed_path+'/PSTH_all_units_user_window_pdf/all_noise_interval-{1}-{2}.pdf'.format(start_min, end_min), format='pdf')
+                    plt.savefig(analyzed_path+'/PSTH_all_units_user_window_svg/all_noise_interval-{1}-{2}.svg'.format(start_min, end_min), format='svg')
                 else:
                     plt.suptitle('PSTH Graph / Group-{0} Unit-{1}, Interval-{2}:{3}'.format(group, psth_all_units_keys[unit], start_min, end_min))
                     plt.savefig(analyzed_path+'/PSTH_all_units_user_window_pdf/{0}_interval-{1}-{2}.pdf'.format(psth_all_units_keys[unit], start_min, end_min), format='pdf')
