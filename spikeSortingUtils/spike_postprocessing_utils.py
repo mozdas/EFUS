@@ -50,9 +50,7 @@ def retain_cluster_info(probe,group,p,mainPath):
 
     unit_indices = np.unique(np_clu)
     #unit_indices = np.delete(unit_indices, [0])
-    print(sorted(unit_indices))
     for cluster in sorted(unit_indices):
-        print(cluster)
         spike_times_cluster_index = np.where(np_clu == cluster)
         spike_times_cluster = np_all_spiketimes[spike_times_cluster_index]
         num_spikes_in_cluster = len(spike_times_cluster)
