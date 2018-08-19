@@ -24,6 +24,7 @@ import math
 import shutil
 import matplotlib.pyplot as plt
 
+
 """
 #####Parameters for the script
 #main_path ='/media/yaniklab/05d01d78-2bd6-4a4e-b573-df49ccacb71c/Analyzed-Cleaned/PBS/'
@@ -64,7 +65,7 @@ def merge_all_PSTHs(main_path, integration_start, integration_end, number_of_ele
             psthParamters_other_groups = pickle.load(open(psthParameters_other_groups_path,'rb'))
             if(((psthParamters['window_duration'] == psthParamters_other_groups['window_duration']) and (psthParamters['bin_size_ms'] == psthParamters_other_groups['bin_size_ms']) and (psthParamters['pre_interval_ms'] == psthParamters_other_groups['pre_interval_ms']) and (psthParamters['post_interval_ms'] == psthParamters_other_groups['post_interval_ms']) and (psthParamters['number_of_windows'] == psthParamters_other_groups['number_of_windows']))== False): #If not, raise an error
                 print('Groups of Experiment {} were not analyzed with the same parameters. Rerun the analysis using the same parameters and then try again.'.format(experiment_id))
-            #return None
+                return None
 
         #Save all parameters in respective arrays
         window_durations[folder_number] = psthParamters['window_duration']
@@ -121,7 +122,7 @@ def merge_all_PSTHs(main_path, integration_start, integration_end, number_of_ele
     #Preallocate the analysis arrays
     psth_all = np.zeros(( len(data_folders), number_of_groups, nr_of_electrodes, number_of_window, math.ceil( (pre_interval+post_interval) / bin_size ) ))
     max_responding_electrodes = np.zeros((len(data_folders), number_of_electrodes))
-    psth_max_responding_electrodes = np.zeros(( len(data_folders), number_of_groups, number_of_electrodes, number_of_window, math.ceil( (pre_interval+post_interval) / bin_size ) ))
+    psth_max_responding_electrodes = np.zeros(( len(data_folders), number_of_electrodes, number_of_window, math.ceil( (pre_interval+post_interval) / bin_size ) ))
 
     for folder_number in range(len(data_folders)):
         experiment_id = data_folders[folder_number].rpartition('_')[2]
@@ -138,7 +139,9 @@ def merge_all_PSTHs(main_path, integration_start, integration_end, number_of_ele
 
     integ_index_start = int(integration_start + pre_interval)
     integ_index_end = int(integration_end + pre_interval)
-    psth_integrated = np.sum(np.sum(np.sum(psth_all[:,:,:,:, integ_index_start:integ_index_end], axis=4), axis=3), axis=1) #Integral along time, window and group axes
+    #Reshaped PSTH of which groups of electrodes considered as different electordes
+    psth_reshaped = psth_all.reshape(( len(data_folders), number_of_groups * nr_of_electrodes, number_of_window, math.ceil( (pre_interval+post_interval) / bin_size ) ))
+    psth_integrated = np.sum(np.sum(psth_reshaped[:,:,:, integ_index_start:integ_index_end], axis=3), axis=2) #Integral along time and window axes
     psth_integrated_sorted = np.sort(psth_integrated, kind='mergesort', axis=1) #Sorting the electrodes wrt their integral values using above result
 
 
@@ -150,10 +153,10 @@ def merge_all_PSTHs(main_path, integration_start, integration_end, number_of_ele
     #electrodes = np.where( psth_integrated == psth_integrated.max(axis=2))
     for folder_number in range(len(data_folders)):
         #Selecting only the highest responding electrodes using the indexes finded above
-        psth_max_responding_electrodes[folder_number] = psth_all[:, :,max_responding_electrodes[folder_number].astype(int), :, : ][folder_number]
+        psth_max_responding_electrodes[folder_number] = psth_reshaped[:, max_responding_electrodes[folder_number].astype(int), :, : ][folder_number]
 
-    #Taking average along 
-    psth_avg = np.mean(np.mean(np.mean(psth_max_responding_electrodes, axis=2), axis=1), axis=0)
+    #Taking average along electrode and folders axes
+    psth_avg = np.mean(np.mean(psth_max_responding_electrodes, axis=1), axis=0)
 
     #Create an array that keeps the timings of the windows. Each window is represented by a PSTH graph. The first window start 10 minute before the FUS
     window_timings = np.arange( -window_duration, (number_of_window-1)*window_duration , window_duration)
