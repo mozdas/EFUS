@@ -280,7 +280,10 @@ def psth_analysis(psthParameters):
         pickle.dump({'keys':psth_all_units_keys, 'values':psth_all_units_values}, open('{0}/{1}_probe_{2}_group_{3}_psth_all_units.pickle'.format(analyzed_path,experiment_id,probe,group), 'wb'), protocol = -1) 
 
     if(psthParameters['user_window'][0] == True):
-
+        start_min = psthParameters['user_window'][1]
+        start = start_min * sample_rate * 60
+        end_min = psthParameters['user_window'][2]
+        end = end_min * sample_rate * 60
         if(psthParameters['psth_all_electrodes'] == True):
             print('\nElectrode-wise PSTH Analysis for user window')
             start_min = psthParameters['user_window'][1]
